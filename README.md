@@ -30,7 +30,7 @@ GetLayerStyle.js 主要功能：字体描边、阴影。https://github.com/tonto
 1. 在Unity建一个UI目录如：DiamondShopCapRebateView
 2. PSD导出篇<u>第2步</u>生成的切图和配置拷贝到UI目录中（如果PSD导出篇<u>第2步</u>导出的目录已经满足要求，跳过开头两步）
 3. 在菜单栏选择QuickTool/PSDImport...执行，弹框选择上一步导出的xml文件，将在hierarchy中生成ugui面板
-4. PSDDispatchWindow会自动弹出。如果有旧图片，需要自己决定是否覆盖：√上就是覆盖。然后按Dispatch按钮，新图片会自动生成到对应的目录，✓上的旧图片会自动覆盖对应路径的图片，没✓上的旧图片会引用对应路径的图片**不做覆盖处理**。(如果看不懂什么意思，请联系李柏祥)
+4. PSDDispatchWindow会自动弹出。如果有旧图片，需要自己决定是否覆盖：√上就是覆盖。然后按Dispatch按钮，新图片会自动生成到对应的目录，✓上的旧图片会自动覆盖对应路径的图片，没✓上的旧图片会引用对应路径的图片**不做覆盖处理**。(如果看不懂什么意思，请联系作者)
 ![image](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName3.jpg)
 [插图](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName3.jpg)
 5. 如果觉得生成的UI没问题，不需要再重新生成，可以按如下按钮Delete All PSD Resource删除第一步目录下所有文件。![image](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName4.jpg)
