@@ -55,9 +55,16 @@ GetLayerStyle.js 主要功能：字体描边、阴影。https://github.com/tonto
 ![image](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName2.png)
 [插图](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName2.png)
 
-### 1.2当前界面图片，可以只写图片名
- 注意：如果图片属于当前界面，不会跟其他界面复用，可以只写图片名。
-比如：`slg_fallout_activity_tab!tabImage`,存放的路径是Assets/CustomAssets/Arts_Dependencies/UIAtlas/*View/Sprites/`slg_fallout_activity_tab`.png，控件的名字是`tabImage`。
+### 1.2只写图片名
+#### 1.2.1全局匹配到图片名
+例子：`slg_fallout_activity_tab!tabImage`, 刚好Assets/CustomAssets/Arts/_Dependencies/UIAtlas/CommonSprite/Sprites/slg_fallout_activity_tab.png存在同名图片。于是它存放的路径是Assets/CustomAssets/Arts/_Dependencies/UIAtlas/CommonSprite/Sprites/`slg_fallout_activity_tab`.png，控件的名字是`tabImage`。
+
+全局匹配时，匹配一些共用图片，一般从这里查：
+- Assets\CustomAssets\Arts\_Dependencies\UIAtlas\CommonSprite
+
+#### 1.2.2全局匹配不到图片名
+图片属于当前界面，会自动放到当前界面目录下
+比如：`slg_fallout_activity_tab!tabImage`,存放的路径是Assets/CustomAssets/Arts/_Dependencies/UIAtlas/*View/Sprites/`slg_fallout_activity_tab`.png，控件的名字是`tabImage`。
 ![image](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName1.jpg)
 [插图](https://github.com/chasing2moro/psd2uguiv2/blob/main/Game/PSD/imageName1.jpg)
 
