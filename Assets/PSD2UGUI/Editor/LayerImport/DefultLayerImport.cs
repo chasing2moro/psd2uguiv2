@@ -33,17 +33,27 @@ namespace PSDUIImporter
                 ctrl.DrawImage(image,parent, obj.gameObject);
             }
 
-            //广州寰宇添加 2022-5-27
-            if(obj.name == "ContentRoot")
-            {
-                var aspectRatioFitter = obj.gameObject.AddMissingComponent<AspectRatioFitter>();
-                aspectRatioFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-#if kUseAddressables //临时宏
-                var fitInParentWithMinMax = obj.gameObject.AddMissingComponent<Assets.CustomAssets.Scripts.Foundation.UI.FitInParentWithMinMax> ();
-#endif
-            }
+            DrawLayerCustom(obj);//广州寰宇添加 2022-5-27
 
             ctrl.DrawLayers(layer.layers, obj.gameObject);
+        }
+
+        public void DrawLayerCustom(RectTransform obj)
+        {
+            //广州寰宇添加 2022-5-27
+            switch (obj.name)
+            {
+                case "ContentRoot":
+                    var aspectRatioFitter = obj.gameObject.AddMissingComponent<AspectRatioFitter>();
+                    aspectRatioFitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+#if kUseAddressables //临时宏
+                    var fitInParentWithMinMax = obj.gameObject.AddMissingComponent<Assets.CustomAssets.Scripts.Foundation.UI.FitInParentWithMinMax>();
+#endif
+                    break;
+                default:
+                    break;
+            }
+            
         }
     }
 }

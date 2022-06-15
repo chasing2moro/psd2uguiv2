@@ -23,8 +23,12 @@ namespace PSDUIImporter
                 import.BeginDrawUILayers();
                 import.BeginSetUIParents();
 
+                //广州寰宇添加 图片分发
                 var window = (PSDDispatchWindow)EditorWindow.GetWindow(typeof(PSDDispatchWindow));
                 window.ShowExternal();
+
+                //广州寰宇添加 预设添加
+                new PSDPrefabMaker().SetAllPrefab();
             }
 
             GC.Collect();

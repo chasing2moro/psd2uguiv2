@@ -32,6 +32,7 @@ public class PSDDispatchWindow: EditorWindow
     private PSDDispatchRes _dispatcher;
     private Dictionary<string, Texture> _name2TextureOld;
     private Dictionary<string, TextureNewInfo> _name2TextureNew;
+    private bool _isSetAnchor = false;
     private bool _isDispatch = false;
     public class TextureNewInfo
     {
@@ -92,6 +93,13 @@ public class PSDDispatchWindow: EditorWindow
             EditorGUILayout.EndHorizontal();
         }
         EditorGUILayout.EndScrollView();
+
+        GUILayout.BeginHorizontal();
+        if (!_isSetAnchor && GUILayout.Button("SetAnchor(使用PSD的锚点)"))
+        {
+            new PSDAnchorMaker().SetAllAnchors();
+            _isSetAnchor = true;
+        }
         if (!_isDispatch)
         {
             if (GUILayout.Button("Dispatch"))
@@ -108,13 +116,19 @@ public class PSDDispatchWindow: EditorWindow
                 var dir = GetPSDDirRoot();
                 if(dir != null)
                 {
-                    Directory.Delete(dir, true);
+                    var delFiles = Directory.GetFiles(dir);
+                    foreach (var delFile in delFiles)
+                    {
+                        File.Delete(delFile);
+                    }
+                    //Directory.Delete(dir, true);
+                   // Directory.CreateDirectory(dir);//美术需要再此目录上次
                 }
                 AssetDatabase.Refresh();
                 Debug.Log("Delete finished");
             }
         }
-
+        GUILayout.EndHorizontal();
     }
 
     public void Dispatch()

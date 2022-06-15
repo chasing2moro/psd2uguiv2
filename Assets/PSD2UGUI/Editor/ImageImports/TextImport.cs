@@ -149,6 +149,15 @@ namespace PSDUIImporter
                     shadow.effectColor = effectColor;
             }
 
+            //angle
+            int angleIndex = 7;
+            if (image.arguments.Length > angleIndex && !string.IsNullOrEmpty(image.arguments[angleIndex]))
+            {
+                int angle;
+                if(int.TryParse(image.arguments[angleIndex], out angle)){
+                    myText.rectTransform.localEulerAngles = new Vector3(0, 0, -angle);
+                }
+            }
 
             // OutLine
             if (!string.IsNullOrEmpty(image.outline))

@@ -23,10 +23,10 @@ public class PSDDispatchRes
         return true;
     }
     //name 是xml 当前路径下 图片的名字，绝对是唯一的
-
-    private  Dictionary<Image, string> _image2name;
-    private  Dictionary<string, string> _name2pathOld;
-    private  Dictionary<string, string> _name2pathNew;
+    //name 是 image.sprite.name
+    private Dictionary<Image, string> _image2name;
+    private Dictionary<string, string> _name2pathOld;
+    private Dictionary<string, string> _name2pathNew;
     public HashSet<string> nameNoMove; //这个图片不要移动
 
     public Dictionary<Image, string> image2name
@@ -43,7 +43,19 @@ public class PSDDispatchRes
         get { return _name2pathNew; }
     }
     private GameObject _rootObj;
+    private Dictionary<string, string> _allImageName2Path;
 
+
+    public List<Image> GetImagesByName(string name)
+    {
+        List<Image> images = new List<Image>();
+        foreach (var image in _image2name.Keys)
+        {
+            if(_image2name[image] == name)
+                images.Add(image);
+        }
+        return images;
+    }
     public static void Log(string vLog)
     {
         Debug.Log("<color=green>psd:</color>" + vLog);
@@ -63,7 +75,7 @@ public class PSDDispatchRes
     }
     public void Dispatch()
     {
-
+        _allImageName2Path = GetAllImageName2Path();
         _rootObj = GetRootUI();
         if (_rootObj == null)
             return;
@@ -81,6 +93,13 @@ public class PSDDispatchRes
             }
             _image2name[image] = image.sprite.name;
             var path = AssetDatabase.GetAssetPath(image.sprite);
+
+            if (path.Contains("_Dependencies"))
+            {
+                Debug.LogWarning("直接用了_Dependencies里资源，不用替换:" + path);
+                continue;
+            }
+
             _name2pathOld[image.sprite.name] = path;
 
             Log(image.sprite.name + " path:" + path);
@@ -108,30 +127,55 @@ public class PSDDispatchRes
         foreach (var name in _name2pathOld.Keys)
         {
             var pathOld = _name2pathOld[name];
-            if (pathOld.Contains("Resources"))
+            if (pathOld.StartsWith("Resources"))
             {
-                Log("Can not Copy built-in res:" + pathOld);
+                var imagesBuiltIn = GetImagesByName(name);
+                foreach (var imageBuiltIn in imagesBuiltIn)
+                {
+                    Debug.LogError("致命bug，请联系李柏祥：Can not Copy built-in path:" + pathOld + " name:" + name, imageBuiltIn.gameObject);
+                }
                 continue;
             }
 
             var fileName = Path.GetFileName(pathOld);
 
+            string assetPathGlobal = null;//全局名字查找（1）
             //路径倒数插入 /Sprites/
             if (fileName.Contains(DirSeparator))
             {
+                //包含路径的图片
+                Debug.LogError("图片包含路径的功能已经废弃：" + fileName);
                 fileName = fileName.Replace(DirSeparator, "/");
                 fileName = Regex.Replace(fileName, "/([^/]*?$)", "/" + SpritesDir + "$1");
             }
             else
             {
-                fileName = _rootObj.name + "/" + SpritesDir + fileName;
+                if (_allImageName2Path.TryGetValue(fileName, out assetPathGlobal))
+                {
+                    //全局名字查找（2）
+                    Debug.Log("<color=yellow>全局名字查找</color>：" + fileName);
+                }
+                else
+                {
+                    //当前界面的路径
+                    fileName = _rootObj.name + "/" + SpritesDir + fileName;
+                }
             }
 
             string pathNew;
-            if (IsUIAtlasRoot(fileName))
-                pathNew = AtlasDir + atlasArray[0] + "/" + fileName;//atlasArray[0] 是 "UIAtlas"
+            if (string.IsNullOrEmpty(assetPathGlobal))
+            {
+                if (IsUIAtlasRoot(fileName))
+                    pathNew = AtlasDir + atlasArray[0] + "/" + fileName;//atlasArray[0] 是 "UIAtlas"
+                else
+                    pathNew = AtlasDir + fileName;// "UIBigImage", "UIBigLoadAtlas", "UILoadAtlas"
+            }
             else
-                pathNew = AtlasDir + fileName;// "UIBigImage", "UIBigLoadAtlas", "UILoadAtlas"
+            {
+                //全局名字查找（2）
+                pathNew = assetPathGlobal;
+            }
+
 
             var dirNew = Path.GetDirectoryName(pathNew);
             if (!Directory.Exists(dirNew))
@@ -245,5 +289,31 @@ public class PSDDispatchRes
     private bool IsHandle(Image vImage)
     {
         return vImage.name == "Handle";
+    }
+
+    //有后缀名的
+    private Dictionary<string, string> GetAllImageName2Path()
+    {
+        List<string> findPaths = new List<string>();
+        for (int i = 0; i < atlasArray.Length; i++)
+        {
+            findPaths.Add(AtlasDir + atlasArray[i]);
+        }
+        var guids = AssetDatabase.FindAssets("t:sprite", findPaths.ToArray());
+        Dictionary<string, string> name2Path = new Dictionary<string, string>();
+        foreach (var guid in guids)
+        {
+            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            var assetName = Path.GetFileName(assetPath);
+            if (name2Path.ContainsKey(assetName))
+            {
+                Debug.LogError("图片重名：" + assetName);
+            }
+            else
+            {
+                name2Path.Add(assetName, assetPath);
+            }
+        }
+        return name2Path;
     }
 }

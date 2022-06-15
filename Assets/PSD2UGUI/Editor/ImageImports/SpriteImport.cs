@@ -59,14 +59,14 @@ namespace PSDUIImporter
                     pic.color = Color.red;
 
                     //一个提示性语句：程序员需要添加Spine
-                    var hint = "程序员需要添加Spine";
+                    var hint = "请需要添加Spine";
                     var imageLable = new PSImage();
                     imageLable.imageType = ImageType.Label;
                     imageLable.imageSource = ImageSource.Common;
                     imageLable.name = hint;
                     imageLable.position = image.position;
                     imageLable.size = image.size;
-                    imageLable.arguments = new string[] {"FFFFFF", "SourceHanSansCN-Medium", "40", hint};
+                    imageLable.arguments = new string[] {"FFFFFF", "SourceHanSansCN-Medium", "20", hint};
                     ctrl.DrawImage(imageLable, pic.gameObject);
                 }
                 else

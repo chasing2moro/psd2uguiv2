@@ -325,6 +325,7 @@ namespace PSDUIImporter
             if (layer.image != null)
             {
                 string newPath = PSDImporterConst.Globle_BASE_FOLDER;
+#if false //广州寰宇注释
                 if (layer.name == PSDImporterConst.IMAGE)
                 {
                     newPath += PSDImporterConst.IMAGE + "/";
@@ -341,13 +342,14 @@ namespace PSDUIImporter
                 }
                 
                 AssetDatabase.Refresh();
-
+#endif
                 //for (int imageIndex = 0; imageIndex < layer.images.Length; imageIndex++)
                 //{
-                    // we need to fixup all images that were exported from PS
-                    PSImage image = layer.image;
+                // we need to fixup all images that were exported from PS
+                PSImage image = layer.image;
                     if(image.imageSource == ImageSource.Global)
                     {
+                        Debug.LogError("无法再使用" + image.imageSource + "请修改psd");
                         string texturePathName = PSDImportUtility.baseDirectory + image.name + PSDImporterConst.PNG_SUFFIX;
                         string targetPathName = newPath + image.name + PSDImporterConst.PNG_SUFFIX;
 

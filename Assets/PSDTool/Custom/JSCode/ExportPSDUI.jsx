@@ -227,7 +227,8 @@ function exportLayerSet(_layer)
     }
 
     if (_layer.name.search("@NoExport") >= 0) {return};    //不导出标识
-    
+    if(_layer.name.search(tagEscape) >= 0) return;//波浪线不导出
+
     if (_layer.name.search("@PNG") >= 0 || _layer.name.search("@JPG") >= 0) 
     {
         exportLayerSetForImage(_layer);
@@ -272,8 +273,7 @@ function exportLayerSet(_layer)
     }
     else if (_layer.name.search("@LE") >=0)                         //增加布局元素导出
     {
-    	if(_layer.name.search(tagEscape) < 0)//不包含波浪线
-        	exportLayoutElement(_layer)
+        exportLayoutElement(_layer)
     }
      else if (_layer.name.search("@TabGroup") >=0)              //增加页签类型导出
     {
@@ -673,6 +673,7 @@ function exportArtLayer(obj)
     if (typeof(obj) == "undefined") {return};
     if (obj.name.search("@Size") >= 0) {return};
     if (obj.name.search("@NoExport") >= 0) {return};    //不导出标识
+    if (obj.name.search(tagEscape) >= 0) return;//波浪线不导出
 
     sceneData += "\n<Layer>";
     sceneData += "<type>Normal</type>";
@@ -808,6 +809,25 @@ function exportLabel(obj,validFileName)
         sceneData += "<string></string>";
     }
 
+    //7
+    if(obj.name.search("_Angle") >= 0){
+        var re = /\s*_Angle(\:\d+)/g;
+        var result = obj.name.match(re)
+        if (result) {
+            var getStr = result[0];
+            var getStrs = getStr.split(":");
+            if ( getStrs.length != 2) 
+                alert("图层名为："+obj.name+"的角度格式不对！应为_Angle:数字");
+            var angleStr = getStrs[1];
+            sceneData += "<string>" + angleStr + "</string>";
+        }else{
+            alert("图层名为："+obj.name+"的角度格式不对！应为_Angle:数字");
+            sceneData += "<string></string>";
+        }
+    }else{
+        sceneData += "<string></string>";
+    }
+
     sceneData += "</arguments>";
 
 	// 透明度
@@ -892,7 +912,7 @@ function exportTexture(obj,validFileName)
 
 // merge:是否合并，默认不合并
 function exportImage(obj,validFileName)
-{
+{ 
     //var validFileName = makeValidFileName(obj.name);
     var oriName = obj.name
     sceneData += "<name>" + validFileName + "</name>\n";
@@ -1248,6 +1268,9 @@ function makeValidFileName(fileName)
     var validName = fileName.replace(/^\s+|\s+$/gm, ''); // trim spaces
     //删除九宫格关键字符
     validName = validName.replace(/\s*_9S(\:\d+)+/g,"");
+
+    //删除text角度关键字符（不应该写这里，但是暂时这样吧）
+    validName = validName.replace(/\s*_Angle(\:\d+)/g,"");
 
 	// 删除渐变色关键字
 	validName = validName.replace(/\s*_JB(\:[a-zA-Z0-9]+)+/g,"");
